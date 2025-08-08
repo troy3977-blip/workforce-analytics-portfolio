@@ -5,7 +5,10 @@ This portfolio showcases real-world projects in capacity forecasting, workforce 
 ### Projects:
 
 1. **Excel-Based Forecasting Model**
-   - Traditional capacity forecast using volume, AHT, shrinkage, occupancy
+   - Clean data with formulas
+   - De-trend data
+   - De-seasonalize data
+   - HWA triple smoothing forecast
    - Built with Excel formulas and scenario modeling
 
 2. **Python-Based Forecasting**
