@@ -1,0 +1,36 @@
+pip install Prophet
+import pandas as pd
+from prophet import Prophet
+import matplotlib.pyplot as plt
+
+# Step 1: Load the data
+df = pd.read_csv("healthcare_dataset.csv")
+
+# Step 2: Convert date and count monthly patients
+df["Date of Admission"] = pd.to_datetime(df["Date of Admission"])
+monthly_counts = df.groupby(df["Date of Admission"].dt.to_period("M")).size()
+monthly_counts = monthly_counts.to_timestamp().reset_index()
+monthly_counts.columns = ["ds", "y"]  # Prophet requires 'ds' and 'y' column names
+
+# Step 3: Initialize and train Prophet model
+model = Prophet()
+model.fit(monthly_counts)
+
+# Step 4: Create future dataframe from May 2025 to Dec 2026 (20 months)
+future = model.make_future_dataframe(periods=20, freq="MS")
+forecast = model.predict(future)
+
+# Step 5: Filter the future forecast (May 2025 to Dec 2026)
+forecast_subset = forecast[(forecast["ds"] >= "2025-05-01") & (forecast["ds"] <= "2026-12-01")]
+
+# Step 6: Plot the full forecast
+model.plot(forecast)
+plt.title("Monthly Patient Forecast (Prophet)")
+plt.xlabel("Date")
+plt.ylabel("Patients")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Step 7: Export forecast
+forecast_subset[["ds", "yhat"]].rename(columns={"ds": "Month", "yhat": "Forecasted Patients"}).to_csv("prophet_patient_forecast.csv", index=False)
